@@ -20,6 +20,7 @@ class _HomeSideState extends State<HomeSide> {
   String nama = "";
   String token = "";
   
+  
   getDataUser() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     
@@ -33,7 +34,7 @@ class _HomeSideState extends State<HomeSide> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     token = pref.getString('auth');
     http.Response response = await http.get(url+'api/service',  headers: { 'Authorization': 'Bearer $token', },);
-    
+    // print(response.body);
     data = jsonDecode(response.body);
     setState(() {
       userData = data["data"];

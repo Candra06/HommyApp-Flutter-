@@ -50,7 +50,7 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
           FlatButton(
             child: Text('Ok'),
             onPressed: () {
-              Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
+              
             },
           )
         ],
@@ -246,8 +246,9 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
                                 textColor: Colors.white,
                                 child:Text('Daftar'),
                                 onPressed: () {
-                                  // Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
                                   register();
+                                  // Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
+                                  
                                 },
                               ),
                         ),

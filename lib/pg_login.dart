@@ -30,19 +30,23 @@ class _LoginPageState extends State<LoginPage> with Validasi{
   final _key = new GlobalKey<FormState>();
   Map data;
   List response;
+  bool login;
 
   final TextEditingController txtemail = new TextEditingController();
   final TextEditingController txtpassword = new TextEditingController();
 
-  
+  Future setValue() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getBool("isLogin") ?? false;
+  }
 
   Future _cekLogin() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getBool("isLogin")) {
-      Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
-    }else{
-      pref.setBool("isLogin", false);
-      Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
+    
+    if (pref.getString("nama") != null || pref.getString("auth") != null) {
+      setState(() {
+        Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
+      });
     }
   }
 
@@ -62,16 +66,11 @@ class _LoginPageState extends State<LoginPage> with Validasi{
           pref.setString("nama", data["data"]["name"]);
           pref.setString("email", data["data"]["email"]);
           pref.setString("id", data["data"]["id"]);
-          print(pref.getString("nama"));
-          print(pref.getString("auth"));
-          print(pref.getString("email"));
-          print(pref.getString("id"));
-          print(pref.getBool("isLogin"));
-          Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
+          login =pref.getBool("isLogin");
+          Navigator.of(context).pushReplacement(new PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
         },
       );
 
-      // set up the AlertDialog
       AlertDialog alert = AlertDialog(
         title: Text("Pesan"),
         content: Text("Login berhasil!"),
@@ -80,7 +79,6 @@ class _LoginPageState extends State<LoginPage> with Validasi{
         ],
       );
 
-      // show the dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -91,7 +89,7 @@ class _LoginPageState extends State<LoginPage> with Validasi{
       Widget okButton = FlatButton(
         child: Text("OK"),
         onPressed: () {
-          // Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
+          Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
         },
       );
 

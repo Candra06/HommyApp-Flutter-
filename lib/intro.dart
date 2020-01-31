@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hommy_app/pg_login.dart';
 import 'package:hommy_app/utilities/style.dart';
-import 'package:page_transition/page_transition.dart';
+// import 'package:page_transition/page_transition.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:intro_slider/intro_slider.dart';
 
+void main() {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SliderIntro(),
+    )
+  );
+}
 
 class SliderIntro extends StatefulWidget {
   @override
@@ -28,7 +36,7 @@ class _SliderIntroState extends State<SliderIntro> {
         description: "Kompetensi tukang tersertifikasi sesuai dengan bidangnya masing-masing.",
         marginDescription: EdgeInsets.all(20),
         styleDescription: kSubtitleStyle,
-        pathImage: "assets/images/onboarding0.png",
+        pathImage: "assets/images/profesional.png",
       ),
     );
      slides.add(
@@ -37,7 +45,7 @@ class _SliderIntroState extends State<SliderIntro> {
         styleTitle: kTitleStyle,
         description: "Tenaga tukang dengan kepribadian yang amanah serta penuh tanggung jawab.",
         styleDescription: kSubtitleStyle,
-        pathImage: "assets/images/onboarding0.png",
+        pathImage: "assets/images/terpercaya.png",
       ),
     );
      slides.add(
@@ -46,13 +54,13 @@ class _SliderIntroState extends State<SliderIntro> {
         styleTitle: kTitleStyle,
         description: "Proses pemesanan jasa tukang bangunan sangat mudah untuk dilakukan.",
         styleDescription: kSubtitleStyle,
-        pathImage: "assets/images/onboarding0.png",
+        pathImage: "assets/images/mudah.png",
       ),
     );
   }
 
   void onDonePress() {
-    Navigator.push(context, PageTransition(type: PageTransitionType.upToDown, child: LoginPage()));
+    Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_){ return new LoginPage();}));
   }
 
   void onTabChangeComplete(index){

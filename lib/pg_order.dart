@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:hommy_app/Validasi/TextValidation.dart';
+import 'package:hommy_app/Validasi/TextValidation.dart';
 import 'package:flutter/material.dart';
 import 'package:hommy_app/pg_dashboard.dart';
 import 'package:page_transition/page_transition.dart';
@@ -26,6 +27,8 @@ class _OrderPageState extends State<OrderPage> {
   String token ;
 
   Map data;
+
+  final _key = new GlobalKey<FormState>();
 
   final TextEditingController alamat = new TextEditingController();
 
@@ -130,6 +133,7 @@ class _OrderPageState extends State<OrderPage> {
                   child: Text('Pemesanan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, fontFamily: 'Roboto', color: Colors.black), ),
                 ),
                 Form(
+                  key: _key,
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 30,),
@@ -137,9 +141,9 @@ class _OrderPageState extends State<OrderPage> {
                           padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: Row(
                             children: <Widget>[
-                              Icon(Icons.person, size: 29,),
+                              Icon(Icons.person, size: 29, color: Colors.black54,),
                               SizedBox(width: 10,),
-                              Text(nama, style: TextStyle(fontSize: 18),)
+                              Text(nama == null ? 'waiting...' : nama, style: TextStyle(fontSize: 18),)
                             ],
                           ),
                         ),
@@ -148,9 +152,9 @@ class _OrderPageState extends State<OrderPage> {
                           padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: Row(
                             children: <Widget>[
-                              Icon(Icons.phone, size: 29,),
+                              Icon(Icons.phone, size: 29, color: Colors.black54,),
                               SizedBox(width: 10,),
-                              Text(email, style: TextStyle(fontSize: 18),)
+                              Text(email == null ? 'waiting...' : email, style: TextStyle(fontSize: 18),)
                             ],
                           ),
                         ),
@@ -159,7 +163,7 @@ class _OrderPageState extends State<OrderPage> {
                           padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: Row(
                             children: <Widget>[
-                              Icon(Icons.build, size: 29,),
+                              Icon(Icons.build, size: 29, color: Colors.black54,),
                               SizedBox(width: 10,),
                               Text("${widget.layanan}", style: TextStyle(fontSize: 18),)
                             ],
@@ -169,10 +173,16 @@ class _OrderPageState extends State<OrderPage> {
                         Container(
                           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Alamat tidak boleh kosong';
+                              }
+                              return null;
+                            },
                             controller: alamat,
                             decoration: InputDecoration(
                               labelText: "Alamat",
-                              icon: Icon(Icons.home, size: 30, color: Colors.black,),
+                              icon: Icon(Icons.home, size: 30, color: Colors.black54,),
                               labelStyle: TextStyle(color: Colors.pinkAccent),
                                 hintText: "Masukkan Alamat",
                                 focusedBorder: UnderlineInputBorder(
@@ -193,7 +203,10 @@ class _OrderPageState extends State<OrderPage> {
                             child: Text('PESAN', style: TextStyle(color: Colors.white),),
                             splashColor: Colors.pink,
                             onPressed: () {
-                              order();
+                              if (_key.currentState.validate()) {
+                                order();
+                              }
+                              
                             },
                           )
                         )
