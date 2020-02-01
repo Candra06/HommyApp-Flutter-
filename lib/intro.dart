@@ -4,6 +4,8 @@ import 'package:hommy_app/utilities/style.dart';
 // import 'package:page_transition/page_transition.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:intro_slider/intro_slider.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(
@@ -23,12 +25,13 @@ class _SliderIntroState extends State<SliderIntro> {
 
   List<Slide> slides = new List();
 
-  Function goToTap;
+  Function goToTap;  
+
+ 
 
   @override
   void initState() {
     super.initState(); 
-
     slides.add(
       new Slide(
         title: "Professional",
@@ -59,8 +62,10 @@ class _SliderIntroState extends State<SliderIntro> {
     );
   }
 
-  void onDonePress() {
-    Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_){ return new LoginPage();}));
+  void onDonePress() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setInt("key", 1);
+    Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.upToDown, duration: Duration(seconds: 1), child: LoginPage()));
   }
 
   void onTabChangeComplete(index){

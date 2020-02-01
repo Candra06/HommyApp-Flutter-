@@ -124,7 +124,7 @@ class _HomeSideState extends State<HomeSide> {
                                         Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: OrderPage(layanan: "${userData[index]['name']}",)));
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.all(5),
+                                        padding: EdgeInsets.fromLTRB(3, 3, 3, 2),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius: BorderRadius.circular(10),
@@ -141,8 +141,8 @@ class _HomeSideState extends State<HomeSide> {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: <Widget>[
-                                            Icon(Icons.access_alarm, size: 30.0),
-                                            Text("${userData[index]['name']}", style:TextStyle(color: Colors.pinkAccent, fontSize: 14), textAlign: TextAlign.center,)
+                                            Image.asset('assets/images/layanan.png', height: 55, width: 55,),
+                                            Text("${userData[index]['name']}", style:TextStyle(color: Colors.pinkAccent, fontSize: 12), textAlign: TextAlign.center,)
                                           ],
                                         ),
                                       ),

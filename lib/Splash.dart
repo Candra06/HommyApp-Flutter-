@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hommy_app/pg_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'intro.dart';
 import 'Animations/fade_animation.dart';
 import 'package:page_transition/page_transition.dart';
@@ -9,12 +11,24 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin{
 
+  Future cekFirstTime() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    bool seen = (pref.getBool('seen') ?? false);
+    if (seen) {
+      Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.upToDown, duration: Duration(seconds: 1), child: LoginPage()));
+    }else{
+      await pref.setBool('seen', true);
+      Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.leftToRight, child: SliderIntro()));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 4),
+    Future.delayed(Duration(seconds: 3),
     () {
-      Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_){ return new SliderIntro();}));
+      // Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (_){ return new SliderIntro();}));
+      cekFirstTime();
     }
     );
 
@@ -23,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(
           width: double.infinity,
