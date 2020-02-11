@@ -1,58 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
+import 'dart:convert';
+
+import 'auth/autentication.dart';
 
 class DetailPesanan extends StatefulWidget {
+  final String idDetail;
+
+  DetailPesanan({Key key, this.idDetail}) : super(key: key);
   @override
   _DetailPesananState createState() => _DetailPesananState();
 }
 
 class _DetailPesananState extends State<DetailPesanan> {
+  String token = "";
+  String nama = "";
+  String layanan = "";
+  String alamat = "";
+  String id;
+  List progres;
+  Map data;
+  int len = 0;
+  List<dynamic> listTimeline;
 
   int indexStep = 0;
 
-  List<Step>lstStep=<Step>[
-    Step(
-      title: Text("1 Januari 2019"),
-      subtitle: Text('Pengajuan dikirim'),
-      content: Text('Anda memesan layanan'),
-      isActive: true
-    ),
-    Step(
-      title: Text("1 Januari 2019"),
-      subtitle: Text('Pengajuan dikirim'),
-      content: Text('Anda memesan layanan'),
-      isActive: true
-    ),
-    Step(
-      title: Text("1 Januari 2019"),
-      subtitle: Text('Pengajuan dikirim'),
-      content: Text('Anda memesan layanan'),
-      isActive: true
-    ),
-    Step(
-      title: Text("1 Januari 2019"),
-      subtitle: Text('Pengajuan dikirim'),
-      content: Text('Anda memesan layanan'),
-      isActive: true
-    ),
-    Step(
-      title: Text("1 Januari 2019"),
-      subtitle: Text('Pengajuan dikirim'),
-      content: Text('Anda memesan layanan'),
-      isActive: true
-    ),
-    Step(
-      title: Text("1 Januari 2019"),
-      subtitle: Text('Pengajuan dikirim'),
-      content: Text('Anda memesan layanan'),
-      isActive: true
-    ),
-    Step(
-      title: Text("1 Januari 2019"),
-      subtitle: Text('Pengajuan dikirim'),
-      content: Text('Anda memesan layanan'),
-      isActive: true
-    ),
-  ];
+  Future getData() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      token = pref.getString('auth');
+      nama = pref.getString('nama');
+      id = pref.getString('id');
+      // print(token);
+    });
+  }
+
+  Future getDetail() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    token = pref.getString('auth');
+    http.Response res = await http.post(url + 'api/order/detail', body: {
+      'id_order': "${widget.idDetail}",
+    }, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    // print(res.body);
+    data = jsonDecode(res.body);
+    setState(() {
+      listTimeline = data["data"];
+      // print(listTimeline);
+      len = listTimeline.length;
+      alamat = data["data"][0]['address'];
+      layanan = data["data"][0]['service'];
+      progres = data["data"];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    getDetail();
+    // print(listData());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,142 +73,192 @@ class _DetailPesananState extends State<DetailPesanan> {
         backgroundColor: Colors.pinkAccent,
         leading: new IconButton(
           icon: new Icon(Icons.arrow_back),
-          onPressed: (){
+          onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ),
       body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
-                          child: Text('Nama ' ),
-                        ),
-                        Container(
-                          constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
-                          child: Text(' : '),
-                        ),
-                        Container(
-                          constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
-                          child: Text('Abiyu Candra Adiansyah'),
-                        ),
-                      ],
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
+                      child: Text('Nama '),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
-                          child: Text('Jenis layanan' ),
-                        ),Container(
-                          constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
-                          child: Text(' : '),
-                        ),
-                        Container(
-                          constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
-                          child: Text('Perbaikan', style: TextStyle(color: Colors.pinkAccent),),
-                        ),
-                      ],
+                    Container(
+                      constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
+                      child: Text(' : '),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
-                          child: Text('Alamat' ),
-                        ),Container(
-                          constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
-                          child: Text(' : '),
-                        ),
-                        Container(
-                          constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
-                          child: Text('Jl. Mastrip No.21 RT.23 RW.08 Kembang Bondowoso'),
-                        ),
-                      ],
+                    Container(
+                      constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
+                      child: Text(nama),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
-                          child: Text('Status' ),
-                        ),Container(
-                          constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
-                          child: Text(' : '),
-                        ),
-                        Container(
-                          constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
-                          child: Text('Selesai', style: TextStyle(color: Colors.pinkAccent, fontWeight: FontWeight.bold),),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-                    child: Text('Progress Layanan ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                  ),
-                  Container(
-                    child: SingleChildScrollView(
-
-                      child: Column(
-                        children: <Widget>[
-                          
-                          Stepper(
-                            steps: lstStep,
-                            physics: ClampingScrollPhysics(),
-                            currentStep: indexStep,
-                            type: StepperType.vertical,
-                            onStepCancel: () {
-                              setState(() {
-                                indexStep=0;
-                              });
-                            },
-                            onStepContinue: () {
-                              setState(() {
-                                indexStep++;
-                              });
-                            },
-                            onStepTapped: (step) {
-                              setState(() {
-                                indexStep = step;
-                              });
-                            },
-                            controlsBuilder: (BuildContext context,
-                                          {VoidCallback onStepContinue, VoidCallback onStepCancel}) =>
-                                      Container(),
-                          ),
-                        ],
-                      )
-                    )
-                  )
-
-                ],
+                  ],
+                ),
               ),
-            ),
-            
-          ],
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
+                      child: Text('Jenis layanan'),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
+                      child: Text(' : '),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
+                      child: Text(
+                        layanan,
+                        style: TextStyle(color: Colors.pinkAccent),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
+                      child: Text('Alamat'),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
+                      child: Text(' : '),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
+                      child: Text(alamat),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      constraints: BoxConstraints(minWidth: 90, maxWidth: 150),
+                      child: Text('Status'),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 5, maxWidth: 10),
+                      child: Text(' : '),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
+                      child: Text(
+                        'Selesai',
+                        style: TextStyle(
+                            color: Colors.pinkAccent,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                child: Text(
+                  'Progress Layanan ',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+              ),
+              Container(
+                // child: Text('data'),
+                child: listTimeline == null
+                    ? Text('Loading..')
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: listTimeline.length,
+                        physics: new ScrollPhysics(),
+                        itemBuilder: (BuildContext context, int i) {
+                          return Column(
+                            children: <Widget>[
+                              Container(
+                                  child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 20, top: 5.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Container(
+                                            width: 25,
+                                            height: 25,
+                                            padding: EdgeInsets.all(0),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(50.0),
+                                                border: Border.all(
+                                                    width: 10.0,
+                                                    color: Colors.pink))),
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.only(left: 8.0, top: 10),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Container(
+                                                child: Text('${listTimeline[i]['date']}',
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.pinkAccent),
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(top: 5),
+                                                child: Text(
+                                                  '${listTimeline[i]['title']}',
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 22.0),
+                                    child: Row(children: <Widget>[
+                                      Container(
+                                        height: 40,
+                                        width: 2.0,
+                                        color: Colors.pink,
+                                        margin:
+                                            EdgeInsets.only(left: 10, right: 10),
+                                      )
+                                    ]),
+                                  ),
+                                ],
+                              ))
+                            ],
+                          );
+                        },
+                      ),
+              )
+            ],
+          ),
         ),
-      )
-      
+      ),
     );
   }
 }

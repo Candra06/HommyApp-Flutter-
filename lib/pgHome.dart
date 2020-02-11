@@ -38,7 +38,6 @@ class _HomeSideState extends State<HomeSide> {
     data = jsonDecode(response.body);
     setState(() {
       userData = data["data"];
-      
     });
   }
 
