@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hommy_app/pg_login.dart';
@@ -26,16 +26,15 @@ class _ProfileSideState extends State<ProfileSide> {
       nama = pref.getString('nama');
       hp = pref.getString('email');
     });
-    print(email);
-    print(nama);
-    print(hp);
   }
 
   Future logOut() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     http.Response res = await http.post(url + "api/logout",
-        headers: {'Authorization': pref.getString('auth')});
-    data = jsonDecode(res.body);
+        headers: {'Authorization': 'Bearer '+pref.getString('auth')});
+        print(res.body);
+        print(pref.getString('auth'));
+    // data = jsonDecode(res.body);
     setState(() {
       if (res.statusCode == 200) {
         pref.setBool("isLogin", false);
@@ -157,17 +156,7 @@ class _ProfileSideState extends State<ProfileSide> {
                 ),
               ),
             ),
-            // Container(
-            //   width: double.infinity,
-            //   margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
-            //   child: Column(
-            //     children: <Widget>[
-            //       Center(
-            //         child: Text('User'),
-            //       )
-            //     ],
-            //   ),
-            // )
+            
           ],
         ));
   }

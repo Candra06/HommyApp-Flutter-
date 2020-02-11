@@ -1,4 +1,4 @@
-#Mon Feb 10 15:52:40 WIB 2020
+#Wed Feb 12 00:05:58 WIB 2020
 base.0=/home/dobleh/Documents/Project/Flutter/hommy_app/build/app/intermediates/dex/debug/mergeDexDebug/out/classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

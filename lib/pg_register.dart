@@ -25,77 +25,23 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> with Validasi{
 
+  final _formKey = GlobalKey<FormState>();
+
+  bool hasil;
+
   final TextEditingController txtnama = new TextEditingController();
   final TextEditingController txtemail = new TextEditingController();
   final TextEditingController txtpassword = new TextEditingController();
   final TextEditingController txtconfPassword = new TextEditingController();
   final TextEditingController txtnoHP = new TextEditingController();
 
-  register() async{
-    final respon = await http.post(url+"api/daftar", body: {
-      "name" : txtnama.text,
-      "email" : txtemail.text,
-      "password" : txtpassword.text,
-      "c_password" : txtconfPassword.text,
-      "handphone" : txtnoHP.text,
-      "address" : '-'
-    });
-    if (respon.statusCode == 200) {
-      showAlertDialog(context);
-    } else {
-      return AlertDialog(
-        title: Text('Message'),
-        content: const Text('Gagal mendaftar!'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Ok'),
-            onPressed: () {
-              
-            },
-          )
-        ],
-      );
-    }
-    final data = jsonDecode(respon.body);
-    print(data);
-  }
-
-  showAlertDialog(BuildContext context) {
-
-  // set up the button
-  Widget okButton = FlatButton(
-    child: Text("OK"),
-    onPressed: () {
-      Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
-     },
-  );
-
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    title: Text("Pesan"),
-    content: Text("Berhasil mendaftar!"),
-    actions: [
-      okButton,
-    ],
-  );
-
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
-}
-
-  final _key = new GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(
+        body: Builder(builder: (context) {
+          return Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
@@ -107,8 +53,8 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
           child: Container(
             margin: EdgeInsets.only(top: 80),
             child: SingleChildScrollView(
-              child: Form(
-                key: _key,
+              child: new Form(
+                key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +83,12 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
                               )
                             ),
                             keyboardType: TextInputType.emailAddress,
-                            validator: validasiIsi,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Nama harus diisi!';
+                              }
+                              return null;
+                            },
                             controller: txtnama,
                             )
                           ),
@@ -151,8 +102,13 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
                                 borderSide: BorderSide(color: Colors.pinkAccent)
                               )
                             ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: validasiIsi,
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Nomor HP harus diisi!';
+                              }
+                              return null;
+                            },
                             controller: txtnoHP,
                             )
                           ),
@@ -167,7 +123,12 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
                               )
                             ),
                             keyboardType: TextInputType.emailAddress,
-                            validator: validasiEmail,
+                            validator: (value) {
+                              if (!value.contains('@')) {
+                                return 'Email tidak valid!';
+                              }
+                              return null;
+                            },
                             controller: txtemail,
                             )
                           ),
@@ -182,7 +143,12 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
                               )
                             ),
                             obscureText: true,
-                            validator: validasiPassword,
+                            validator: (val) {
+                              if (val.length < 4) {
+                                return 'Password minimal 4 karakter!';
+                              }
+                              return null;
+                            },
                             controller: txtpassword,
                             )
                           ),
@@ -197,7 +163,14 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
                               )
                             ),
                             obscureText: true,
-                            validator: validasiPassword,
+                            validator: (val) {
+                              if (val.isEmpty && val.length < 4) {
+                                return 'Password minimal 4 karakter!';
+                              }else if (val.toString() != txtpassword.text) {
+                                return 'Password tidak sama!';
+                              }
+                              return null;
+                            },
                             controller: txtconfPassword,
                             )
                           ),
@@ -245,9 +218,52 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
                                 ),
                                 textColor: Colors.white,
                                 child:Text('Daftar'),
-                                onPressed: () {
-                                  register();
-                                  // Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
+                                onPressed: () async{
+
+                                  SnackBar failed = SnackBar(
+                                    content: Text('Register gagal!'),
+                                      duration: Duration(seconds: 10),
+                                      backgroundColor: Colors.red[900],
+                                      action: SnackBarAction(
+                                        label: 'Oke', 
+                                        onPressed: () async{
+                                          Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: RegisterPage()));
+                                        }),
+                                  );
+
+                                  SnackBar success = SnackBar(
+                                    content: Text('Register berhasil!'),
+                                      duration: Duration(seconds: 10),
+                                      backgroundColor: Colors.green,
+                                      action: SnackBarAction(
+                                        label: 'Oke', 
+                                        onPressed: () async{
+                                          Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
+                                        }),
+                                  );
+
+                                  if (_formKey.currentState.validate()) {
+                                    final respon = await http.post(url+"api/daftar", body: {
+                                        "name" : txtnama.text,
+                                        "email" : txtemail.text,
+                                        "password" : txtpassword.text,
+                                        "c_password" : txtconfPassword.text,
+                                        "handphone" : txtnoHP.text,
+                                        "address" : '-'
+                                      });
+                                      print(respon.body);
+                                      final data = jsonDecode(respon.body);
+                                      print(data['error']);
+                                      print(respon.statusCode);
+                                      if (data['error'] == 'Email sudah terdaftar!' || data['error'] == 'No Handphone sudah terdaftar!' ) {
+                                        Scaffold.of(context).showSnackBar(failed);
+                                      } else if (respon.statusCode != 200) {
+                                        Scaffold.of(context).showSnackBar(failed);
+                                      }else if(respon.statusCode == 200 && data['message'] == 'Berhasil Mendaftar!'){
+                                        Scaffold.of(context).showSnackBar(success);
+                                      }
+                                    
+                                  }
                                   
                                 },
                               ),
@@ -264,7 +280,8 @@ class _RegisterPageState extends State<RegisterPage> with Validasi{
             )
           )
           
-        ),
+        );
+        })
         
       ),
       

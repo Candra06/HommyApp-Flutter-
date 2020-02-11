@@ -50,68 +50,6 @@ class _LoginPageState extends State<LoginPage> with Validasi{
     }
   }
 
-  Future getLogin() async{
-    http.Response respon = await http.post(url+"api/login", body: {
-      "email" : txtemail.text,
-      "password" : txtpassword.text
-    });
-    data = jsonDecode(respon.body);
-    if (respon.statusCode == 200) {
-      Widget okButton = FlatButton(
-        child: Text("OK"),
-        onPressed: () async {
-          SharedPreferences pref = await SharedPreferences.getInstance();
-          pref.setBool("isLogin", true);
-          pref.setString("auth", data["data"]["token"]);
-          pref.setString("nama", data["data"]["name"]);
-          pref.setString("email", data["data"]["email"]);
-          pref.setString("id", data["data"]["id"]);
-          login =pref.getBool("isLogin");
-          Navigator.of(context).pushReplacement(new PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
-        },
-      );
-
-      AlertDialog alert = AlertDialog(
-        title: Text("Pesan"),
-        content: Text("Login berhasil!"),
-        actions: [
-          okButton,
-        ],
-      );
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
-    } else {
-      Widget okButton = FlatButton(
-        child: Text("OK"),
-        onPressed: () {
-          Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
-        },
-      );
-
-      // set up the AlertDialog
-      AlertDialog alert = AlertDialog(
-        title: Text("Pesan"),
-        content: Text("Login gagal!"),
-        actions: [
-          okButton,
-        ],
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -123,7 +61,8 @@ class _LoginPageState extends State<LoginPage> with Validasi{
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(
+        body: Builder(builder: (context) {
+          return Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
@@ -224,9 +163,47 @@ class _LoginPageState extends State<LoginPage> with Validasi{
                             ),
                             textColor: Colors.white,
                             child:Text('Masuk'),
-                            onPressed: () {
-                              // Navigator.push(context, PageTransition(type: PageTransitionType.leftToRightWithFade, child: HomePage()));
-                              getLogin();
+                            onPressed: () async{
+                              SnackBar snackBar = SnackBar(
+                                content: Text('Login gagal!'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.red,
+                                  action: SnackBarAction(
+                                    label: 'Oke', 
+                                    onPressed: () async{
+                                      Navigator.push(context, PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: LoginPage()));
+                                    }),
+                              );
+
+                              SnackBar success = SnackBar(
+                                content: Text('Login berhasil!'),
+                                duration: Duration(seconds: 10),
+                                backgroundColor: Colors.green,
+                                action: SnackBarAction(
+                                  label: 'Oke', 
+                                  onPressed: () async{
+                                    SharedPreferences pref = await SharedPreferences.getInstance();
+                                    pref.setBool("isLogin", true);
+                                    pref.setString("auth", data["data"]["token"]);
+                                    pref.setString("nama", data["data"]["name"]);
+                                    pref.setString("email", data["data"]["email"]);
+                                    pref.setString("id", data["data"]["id"]);
+                                    login =pref.getBool("isLogin");
+                                    Navigator.of(context).pushReplacement(new PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
+                                  }),
+                                );
+                              if (_key.currentState.validate()) {
+                                http.Response respon = await http.post(url+"api/login", body: {
+                                  "email" : txtemail.text,
+                                  "password" : txtpassword.text
+                                });
+                                data = jsonDecode(respon.body);
+                                if (respon.statusCode == 200) {
+                                  Scaffold.of(context).showSnackBar(success);
+                                } else {
+                                  Scaffold.of(context).showSnackBar(snackBar);
+                                }
+                              }
                             },
                           ),
                     ),
@@ -240,10 +217,20 @@ class _LoginPageState extends State<LoginPage> with Validasi{
             ),
           )
           
-        ),
+        );
+        })
         
       ),
       
+    );
+  }
+
+  void showSnackbar(BuildContext context){
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Login gagal!'),
+        action: SnackBarAction(label: 'Oke', onPressed: (){}),
+        )
     );
   }
 }
