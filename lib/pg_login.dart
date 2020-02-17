@@ -165,9 +165,9 @@ class _LoginPageState extends State<LoginPage> with Validasi{
                             child:Text('Masuk'),
                             onPressed: () async{
                               SnackBar snackBar = SnackBar(
-                                content: Text('Login gagal!'),
+                                content: Text('Login gagal!', style: TextStyle(color: Colors.black),),
                                   duration: Duration(seconds: 2),
-                                  backgroundColor: Colors.red,
+                                  backgroundColor: Colors.white,
                                   action: SnackBarAction(
                                     label: 'Oke', 
                                     onPressed: () async{
@@ -188,6 +188,7 @@ class _LoginPageState extends State<LoginPage> with Validasi{
                                     pref.setString("nama", data["data"]["name"]);
                                     pref.setString("email", data["data"]["email"]);
                                     pref.setString("id", data["data"]["id"]);
+                                    pref.setString("hp", data["data"]["handphone"]);
                                     login =pref.getBool("isLogin");
                                     Navigator.of(context).pushReplacement(new PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
                                   }),
@@ -197,9 +198,19 @@ class _LoginPageState extends State<LoginPage> with Validasi{
                                   "email" : txtemail.text,
                                   "password" : txtpassword.text
                                 });
+                                print(respon.body);
                                 data = jsonDecode(respon.body);
                                 if (respon.statusCode == 200) {
-                                  Scaffold.of(context).showSnackBar(success);
+                                  // Scaffold.of(context).showSnackBar(success);
+                                  SharedPreferences pref = await SharedPreferences.getInstance();
+                                    pref.setBool("isLogin", true);
+                                    pref.setString("auth", data["data"]["token"]);
+                                    pref.setString("nama", data["data"]["name"]);
+                                    pref.setString("email", data["data"]["email"]);
+                                    pref.setString("id", data["data"]["id"]);
+                                    pref.setString("hp", data["data"]["handphone"]);
+                                    login =pref.getBool("isLogin");
+                                    Navigator.of(context).pushReplacement(new PageTransition(type: PageTransitionType.fade, duration: Duration(seconds: 1), child: HomePage()));
                                 } else {
                                   Scaffold.of(context).showSnackBar(snackBar);
                                 }

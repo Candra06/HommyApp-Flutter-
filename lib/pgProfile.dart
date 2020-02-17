@@ -24,16 +24,16 @@ class _ProfileSideState extends State<ProfileSide> {
     setState(() {
       email = pref.getString('email');
       nama = pref.getString('nama');
-      hp = pref.getString('email');
+      hp = pref.getString('hp');
     });
   }
 
   Future logOut() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     http.Response res = await http.post(url + "api/logout",
-        headers: {'Authorization': 'Bearer '+pref.getString('auth')});
-        print(res.body);
-        print(pref.getString('auth'));
+        headers: {'Authorization': 'Bearer ' + pref.getString('auth')});
+    print(res.body);
+    print(pref.getString('auth'));
     // data = jsonDecode(res.body);
     setState(() {
       if (res.statusCode == 200) {
@@ -42,6 +42,7 @@ class _ProfileSideState extends State<ProfileSide> {
         pref.setString("auth", null);
         pref.setString("email", null);
         pref.setString("id", null);
+        pref.setString("hp", null);
         Navigator.of(context).pushReplacement(new PageTransition(
             type: PageTransitionType.fade,
             duration: Duration(seconds: 1),
@@ -59,105 +60,115 @@ class _ProfileSideState extends State<ProfileSide> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.black12,
-        body: Stack(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/backdash.png'),
-                      fit: BoxFit.cover)),
-              child: Expanded(
-                child: Container(),
-              ),
-            ),
-            Positioned(
-              top: 148,
-              left: 20,
-              right: 20,
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.4,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 60),
-                        child: Text(
-                          nama,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                              color: Colors.pink),
-                        ),
+    return  Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.black12,
+          body: Stack(
+            children: <Widget>[
+              Image.asset('assets/images/backdash.png',
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
+              alignment: Alignment.center,),
+              
+              Container(
+                alignment: FractionalOffset.center,
+                child: Stack(
+                  children:<Widget>[
+                    
+                    Container(
+                          padding: EdgeInsets.only(top: 55),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(9),
+                        color: Color.fromRGBO(255, 255, 255, 0.8),
                       ),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                          child: Icon(
-                            Icons.email,
-                            color: Colors.black45,
-                          ),
-                        ),
-                        Text(
-                          email,
-                          style: TextStyle(color: Colors.black87),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                          child: Icon(
-                            Icons.phone,
-                            color: Colors.black45,
-                          ),
-                        ),
-                        Text(hp, style: TextStyle(color: Colors.black87))
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        logOut();
-                      },
-                      child: Row(
+                      margin: EdgeInsets.only(left: 16, right: 16),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      child: new Column(
                         children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                            child: Icon(
-                              Icons.exit_to_app,
-                              color: Colors.pink,
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 60),
+                              child: Text(
+                                nama,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Colors.pink),
+                              ),
                             ),
                           ),
-                          Text('Logout', style: TextStyle(color: Colors.pink))
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                                child: Icon(
+                                  Icons.email,
+                                  color: Colors.black45,
+                                ),
+                              ),
+                              Text(
+                                email,
+                                style: TextStyle(color: Colors.black87),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                                child: Icon(
+                                  Icons.phone,
+                                  color: Colors.black45,
+                                ),
+                              ),
+                              Text(hp, style: TextStyle(color: Colors.black87))
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              logOut();
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                                  child: Icon(
+                                    Icons.exit_to_app,
+                                    color: Colors.pink,
+                                  ),
+                                ),
+                                Text('Logout', style: TextStyle(color: Colors.pink))
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          Center(
+                            child: Text('2020 \u00a9 Copyright by PrimaInovasiTeknologi', style: TextStyle(color: Colors.black45),)
+                          )
                         ],
                       ),
-                    )
-                  ],
+                    ),
+                  ),
+                  Positioned(
+                    left: MediaQuery.of(context).size.width * 1/3,
+                    right: MediaQuery.of(context).size.width * 1/3,
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage('assets/images/user.png'),
+                          backgroundColor: Colors.transparent,
+                        ),
+                      )),
+                  ] 
                 ),
-              ),
-            ),
-            Positioned(
-              top: 100,
-              left: MediaQuery.of(context).size.width * 1 / 3,
-              right: MediaQuery.of(context).size.width * 1 / 3,
-              child: new ClipRRect(
-                borderRadius: new BorderRadius.circular(50.0),
-                child: Image.network(
-                  'http://sirmb.evoindo.com/assets/dist/img/user2-160x160.jpg',
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            
-          ],
-        ));
+              )
+            ],
+          )
+    );
   }
+
 }

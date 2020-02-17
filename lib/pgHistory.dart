@@ -29,10 +29,12 @@ class _HistorySideState extends State<HistorySide> {
       body: {
         'id_user' : id,
       });
+      print(response.body);
     data = jsonDecode(response.body);
     
     setState(() {
       listHistory = data["data"];
+      print(listHistory);
     });
   }
 
@@ -126,7 +128,14 @@ class _HistorySideState extends State<HistorySide> {
                             ),
                             Container(
                               margin: EdgeInsets.fromLTRB(5, 2, 5, 2),
-                              child: Text("${listHistory[index]['title']}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text("${listHistory[index]['id_order']}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.pink),),
+                                  Text("${listHistory[index]['service']}", style: TextStyle( color: Colors.black54),)
+                                ]
+                              ),
                             )
                           ],
                         ),

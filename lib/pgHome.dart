@@ -30,6 +30,7 @@ class _HomeSideState extends State<HomeSide> {
     });
   }
 
+  // fungsi untuk http request
   Future getData() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     token = pref.getString('auth');
@@ -39,6 +40,26 @@ class _HomeSideState extends State<HomeSide> {
     setState(() {
       userData = data["data"];
     });
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Apakah anda yakin?'),
+        content: new Text('Anda ingin keluar aplikasi?'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Tidak'),
+          ),
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Iya'),
+          ),
+        ],
+      ),
+    )) ?? false;
   }
 
   @override
@@ -53,114 +74,119 @@ class _HomeSideState extends State<HomeSide> {
     List<Widget> list = [
       Text('Waiting...')
     ];
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/backdash.png'),
-            fit: BoxFit.cover
-          )
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 50,),
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text('Wellcome, ', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                      Text(nama, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold))
-                    ],
-                  ),
-                  SizedBox(height: 20,),
-                  Text('How do you fill in this time?', style: TextStyle(color: Colors.white))
-                ],
-              ),
-            ),
-            SizedBox(height: 40,),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('Layanan Hommy', style: TextStyle(fontSize: 18),),
-                            SizedBox(height: 10,),
-                            Text('Beberapa Layanan di Hommy.ID', style: TextStyle(color: Colors.pinkAccent),),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 60),
-                        child: 
-                            Container(
-                              child: GridView.count(
-                                crossAxisCount: 3,
-                                childAspectRatio: 1.0,
-                                padding: const EdgeInsets.all(10),
-                                mainAxisSpacing: 15.0,
-                                crossAxisSpacing: 12.0,
-                                
-                                children: userData == null ? list : new List.generate(userData.length, (index){
-                                    return GestureDetector(
-                                      onTap: () {
-                                        
-                                        Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: OrderPage(layanan: "${userData[index]['name']}",)));
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(3, 3, 3, 2),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Color.fromRGBO(235, 26, 162, .3),
-                                              spreadRadius: 1,
-                                              blurRadius: 3,
-                                              offset: Offset(0, 2)
-                                            )
-                                          ]
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Image.asset('assets/images/layanan.png', height: 55, width: 55,),
-                                            Text("${userData[index]['name']}", style:TextStyle(color: Colors.pinkAccent, fontSize: 12), textAlign: TextAlign.center,)
-                                          ],
-                                        ),
-                                      ),
-                                  );
-                                  }
-                                )
-                              ),
-                            )
-                    
-                      )
-                      
-                    ],
-                  )
-                ),
-              ),
+    return new WillPopScope(
+      onWillPop: _onWillPop,
+          child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/backdash.png'),
+              fit: BoxFit.cover
             )
-          ],
-        ),
-      )
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 50,),
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text('Wellcome, ', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text(nama, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                    SizedBox(height: 20,),
+                    Text('How do you fill in this time?', style: TextStyle(color: Colors.white))
+                  ],
+                ),
+              ),
+              SizedBox(height: 40,),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text('Layanan Hommy', style: TextStyle(fontSize: 18),),
+                              SizedBox(height: 10,),
+                              Text('Beberapa Layanan di Hommy.ID', style: TextStyle(color: Colors.pinkAccent),),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: 60),
+                          child: 
+                              Container(
+                                child: GridView.count(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 1.0,
+                                  padding: const EdgeInsets.all(10),
+                                  mainAxisSpacing: 15.0,
+                                  crossAxisSpacing: 12.0,
+                                  
+                                  children: userData == null ? list : new List.generate(userData.length, (index){
+                                      return GestureDetector(
+                                        onTap: () {
+                                          
+                                          Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: OrderPage(layanan: "${userData[index]['name']}",)));
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.fromLTRB(3, 3, 3, 2),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(10),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Color.fromRGBO(235, 26, 162, .16),
+                                                spreadRadius: 1,
+                                                blurRadius: 2,
+                                                offset: Offset(0, 1)
+                                              )
+                                            ]
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Image.network(url+"${userData[index]['image']}", height: 40, width: 45,),
+                                              SizedBox(height:4),
+                                              // Image.asset('assets/images/layanan.png', height: 45, width: 55,),
+                                              Text("${userData[index]['name']}", style:TextStyle(color: Colors.pinkAccent, fontSize: 12), textAlign: TextAlign.center,)
+                                            ],
+                                          ),
+                                        ),
+                                    );
+                                    }
+                                  )
+                                ),
+                              )
+                      
+                        )
+                        
+                      ],
+                    )
+                  ),
+                ),
+              )
+            ],
+          ),
+        )
+      ),
     );
   }
 }

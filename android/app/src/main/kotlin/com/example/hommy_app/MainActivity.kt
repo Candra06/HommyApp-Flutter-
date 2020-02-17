@@ -1,4 +1,4 @@
-package com.example.hommy_app
+package com.app.hommy_id
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

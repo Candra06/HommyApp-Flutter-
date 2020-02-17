@@ -19,6 +19,7 @@ class _DetailPesananState extends State<DetailPesanan> {
   String nama = "";
   String layanan = "";
   String alamat = "";
+  String status = "";
   String id;
   List progres;
   Map data;
@@ -53,6 +54,16 @@ class _DetailPesananState extends State<DetailPesanan> {
       len = listTimeline.length;
       alamat = data["data"][0]['address'];
       layanan = data["data"][0]['service'];
+      status = data["data"][0]['status'];
+      if (int.parse(status) == 1) {
+        status = "Waiting";
+      }else if (int.parse(status) == 2) {
+        status = "Survei";
+      }else if (int.parse(status) == 3) {
+        status = "Proses";
+      }else if (int.parse(status) == 4) {
+        status = "Selesai";
+      }
       progres = data["data"];
     });
   }
@@ -162,7 +173,7 @@ class _DetailPesananState extends State<DetailPesanan> {
                     Container(
                       constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
                       child: Text(
-                        'Selesai',
+                        status,
                         style: TextStyle(
                             color: Colors.pinkAccent,
                             fontWeight: FontWeight.bold),
@@ -188,69 +199,81 @@ class _DetailPesananState extends State<DetailPesanan> {
                         physics: new ScrollPhysics(),
                         itemBuilder: (BuildContext context, int i) {
                           return Column(
-                            children: <Widget>[
-                              Container(
-                                  child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 20, top: 5.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                            width: 25,
-                                            height: 25,
-                                            padding: EdgeInsets.all(0),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                                border: Border.all(
-                                                    width: 10.0,
-                                                    color: Colors.pink))),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(left: 8.0, top: 10),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Container(
-                                                child: Text('${listTimeline[i]['date']}',
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.pinkAccent),
-                                                ),
+                              children: <Widget>[
+                                Container(
+                                    child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, top: 5.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Container(
+                                              width: 25,
+                                              height: 25,
+                                              padding: EdgeInsets.all(0),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50.0),
+                                                  border: Border.all(
+                                                      width: 10.0,
+                                                      color: Colors.pink))),
+                                          GestureDetector(
+                                            onTap: () {
+                                              _showModalSheet("${listTimeline[i]['image']}");
+
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 8.0, top: 10),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Container(
+                                                    child: Text(
+                                                      '${listTimeline[i]['date']}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              Colors.pinkAccent),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    margin:
+                                                        EdgeInsets.only(top: 5),
+                                                    child: Text(
+                                                      '${listTimeline[i]['title']}',
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              Container(
-                                                margin: EdgeInsets.only(top: 5),
-                                                child: Text(
-                                                  '${listTimeline[i]['title']}',
-                                                  textAlign: TextAlign.start,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 22.0),
-                                    child: Row(children: <Widget>[
-                                      Container(
-                                        height: 40,
-                                        width: 2.0,
-                                        color: Colors.pink,
-                                        margin:
-                                            EdgeInsets.only(left: 10, right: 10),
-                                      )
-                                    ]),
-                                  ),
-                                ],
-                              ))
-                            ],
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 22.0),
+                                      child: Row(children: <Widget>[
+                                        Container(
+                                          height: 40,
+                                          width: 2.0,
+                                          color: Colors.pink,
+                                          margin: EdgeInsets.only(
+                                              left: 10, right: 10),
+                                        )
+                                      ]),
+                                    ),
+                                  ],
+                                ))
+                              ],
+                            
                           );
                         },
                       ),
@@ -260,5 +283,29 @@ class _DetailPesananState extends State<DetailPesanan> {
         ),
       ),
     );
+  }
+
+  void _showModalSheet(String src) {
+    showModalBottomSheet(context: context, builder: (builder) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text('Foto Progress', style: TextStyle(color: Colors.pinkAccent, fontWeight: FontWeight.bold, fontSize: 18),),
+          Container(
+            padding: EdgeInsets.all(16.0),
+            width: MediaQuery.of(context).size.width,
+            height: 300,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(url+src),
+                
+              )
+            ),
+            
+          ),
+        ],
+      );
+    });
   }
 }
